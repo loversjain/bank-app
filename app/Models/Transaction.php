@@ -52,7 +52,7 @@ class Transaction extends Model
         return self::create([
             'user_id' => $userId,
             'type' => $type,
-            'amount' => -$amount,
+            'amount' => $amount,
             'from_account_id' => $accountId
         ]);
     }
@@ -62,7 +62,7 @@ class Transaction extends Model
         return self::create([
             'user_id' => $userId,
             'type' => $type,
-            'amount' => -$amount,
+            'amount' => $amount,
             'from_account_id' => $accountId,
             'to_account_id' => $recipientAccountId
         ]);
