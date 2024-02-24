@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+<h1>Small Banking Application</h1>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Small Banking Application</title>
-</head>
-
-<body>
-    <h1>Small Banking Application</h1>
-
-    <p>Welcome to the Small Banking Application! This application is developed using the Laravel 10.x framework and provides basic banking functionalities such as registration, login, cash deposit, cash withdrawal, cash transfer, account statement, and logout.</p>
+    <p>Welcome to the Small Banking Application! This application is developed using the Laravel 17.x framework and provides basic banking functionalities such as registration, login, cash deposit, cash withdrawal, cash transfer, account statement, and logout.</p>
 
     <h2>Features</h2>
     <ul>
@@ -55,4 +45,4 @@
     </ol>
 
     <h2>License</h2>
-    <p>This project is licen
+    <p>This project is licensed under the <a href="LICENSE">MIT License</a>.</p>
