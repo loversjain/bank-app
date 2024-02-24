@@ -56,20 +56,23 @@ class TransactionApiController extends Controller
                 $transaction->transication_status = Transaction::TRANACTION_DONE;
                 $transaction->save();
             }
+            return response()->json(['message' => 'Withdrawal successful!']);
         } catch (\Exception $e) {
+            return response()->json(['error' => 'Withdrawal unsuccessful!'], 400);
+
             \Log::error("error", ["error"=>$e->getMessage(), "trace"=>$e->getTraceAsString()]);
         }
 
         
 
-        return response()->json(['message' => 'Withdrawal successful!']);
+        
     }
 
     public function transfer(TransferRequest $request)
     {
         $user = $request->user();
         $account = $user->account;
-        
+
         $oldBalance = $account->balance;
         $amount = $request->amount;
 
