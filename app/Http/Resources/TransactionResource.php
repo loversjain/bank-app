@@ -9,21 +9,66 @@ use App\Models\Transaction;
 class TransactionResource extends JsonResource
 {
     /**
+     * @var float The running balance
+     */
+    protected static $runningBalance = 0;
+
+    /**
+     * @var float The previous amount
+     */
+    protected static $prevAmt = 0;
+
+    /**
      * Transform the resource into an array.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return array<string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray($request): array
     {
+        // Calculate new balance
+        $balance = $this->calculateBalance($this->amount, $this->getType());
+
+        // Update previous amount for the next transaction
+        $this->setPrevAmt($balance);
+
         return [
             'id' => $this->id,
             'transaction_date' => $this->created_at->toDateTimeString(),
             'amount' => $this->amount,
-            'type' => ($this->amount > 0) ? 'Credit' : 'Debit',
-            'details' => $this->type === 'Transfer' ? 'Transfer to ' . $this->whenLoaded('account', $this->account->user->email) : $this->type,
-            'balance'  => $this->calculateBalance(),
-            
+            'type' => $this->getType(),
+            'details' => $this->getDetails(),
+            'balance' => $balance,
         ];
+    }
+
+    /**
+     * Get the type of transaction.
+     *
+     * @return string
+     */
+    protected function getType(): string
+    {
+        return ($this->type === 'Deposit') ? 'Credit' : 'Debit';
+    }
+
+    /**
+     * Get the details of the transaction.
+     *
+     * @return string
+     */
+    protected function getDetails(): string
+    {
+        if ($this->type === 'Transfer') {
+            // Check if the account is loaded to avoid MissingValue error
+            if ($this->relationLoaded('account')) {
+                return 'Transfer to ' . $this->account->user->email;
+            }
+            // If account is not loaded, return a default value or handle it accordingly
+            return 'Transfer';
+        }
+        
+        return 'Deposit';
     }
 
     /**
@@ -31,28 +76,38 @@ class TransactionResource extends JsonResource
      *
      * @return float
      */
-    protected function calculateBalance(): float
+    protected function calculateBalance($amount, $type): float
     {
-         // Start with the initial balance from the user's account
-        $balance = 0;
-
-        // Start with the initial balance from the user's account
-    
-
-    // Retrieve all transactions related to the user's account
-    $transactions = Transaction::where('user_id', $this->user->id)
-        ->orderBy('created_at', 'asc')
-        ->get();
-
-    // Iterate through the transactions and update the balance
-    foreach ($transactions as $transaction) {
-        if ($transaction->type === 'Deposit' || $transaction->type === 'Transfer') {
-            $balance += $transaction->amount;
-        } elseif ($transaction->type === 'Withdrawal') {
-            $balance -= $transaction->amount;
+        switch ($type) {
+            case 'Credit':
+                static::$runningBalance += $amount;
+                break;
+            case 'Debit':
+                static::$runningBalance -= $amount;
+                break;
         }
+        
+        return static::$runningBalance;
     }
 
-        return $balance;
+    /**
+     * Get the previous amount.
+     *
+     * @return float
+     */
+    protected function getPrevAmt(): float
+    {
+        return static::$prevAmt;
+    }
+
+    /**
+     * Set the previous amount.
+     *
+     * @param float $balance
+     * @return void
+     */
+    protected function setPrevAmt(float $balance): void
+    {
+        static::$prevAmt = $balance;
     }
 }

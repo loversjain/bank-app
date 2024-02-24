@@ -75,7 +75,7 @@ class Transaction extends Model
             if($accountId) {
                 $query->where('id', $accountId);
             }
-        })->latest()->paginate(10);
+        })->paginate(5);
     }
 
 }

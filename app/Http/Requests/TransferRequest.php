@@ -25,7 +25,7 @@ class TransferRequest extends FormRequest
     {
         return [
             'amount' => 'required|numeric|min:0.01',
-            'recipient_email' => 'required|email',
+            'email' => 'required|email',
         ];
     }
 
@@ -46,7 +46,7 @@ class TransferRequest extends FormRequest
         return [
 
             'amount.required' => 'amount is required',
-            'recipient_email.required' => 'email is required',
+            'email.required' => 'email is required',
 
         ];
 

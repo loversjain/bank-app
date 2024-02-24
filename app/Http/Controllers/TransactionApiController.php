@@ -45,7 +45,7 @@ class TransactionApiController extends Controller
         $amount = $request->amount;
 
         if ($oldBalance < $amount) {
-            return response()->json(['error' => 'Insufficient balance'], 400);
+            return response()->json(['error' => 'Insufficient balance'], 201);
         }
 
         try {
@@ -80,7 +80,7 @@ class TransactionApiController extends Controller
             return response()->json(['error' => 'Insufficient balance'], 400);
         }
 
-        $recipientEmail = $request->recipient_email;
+        $recipientEmail = $request->email;
         $recipient = User::checkEmailExist( $recipientEmail);
 
         if (!$recipient) {
